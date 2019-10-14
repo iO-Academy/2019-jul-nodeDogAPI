@@ -2,10 +2,12 @@ const express = require('express');
 const jsonParser = require('body-parser').json();
 const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
+const cors = require('cors')
 
 const app = express();
 const port = 3000;
 app.listen(port, () => console.log(`Hot Dog API listening on ${port}`));
+app.use(cors());
 
 const mongoUrl = 'mongodb://localhost:27017/';
 const dbName = 'hot-dog';
