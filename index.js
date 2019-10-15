@@ -35,7 +35,7 @@ app.get('/dogs', (req, res) => {
             }
             res.status(200).json({
                 success: true,
-                message: 'Data has been succesfully retrieved and sent.',
+                message: 'Data has been successfully retrieved and sent.',
                 data: docs
             })
             client.close()
