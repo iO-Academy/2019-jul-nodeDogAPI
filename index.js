@@ -22,7 +22,7 @@ app.get('/dogs', (req, res) => {
         data: []
       })
     }
-    let db = client.db(dbName);
+    let db = client.db(dbName)
     let collection = db.collection(collectionName)
     collection.find({}).toArray((err, docs) => {
       if (err) {
@@ -30,14 +30,14 @@ app.get('/dogs', (req, res) => {
           success: true,
           message: 'Error getting data from database.',
           data: []
-        });
-      } 
+        })
+      }
       res.status(200).json({
         success: true,
         message: '',
         data: docs
-      });
+      })
       client.close()
-    });
-  });
-});
+    })
+  })
+})
