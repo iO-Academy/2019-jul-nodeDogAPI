@@ -2,7 +2,7 @@ const express = require('express');
 const jsonParser = require('body-parser').json();
 const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
-const cors = require('cors')
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
@@ -20,7 +20,7 @@ app.get('/dogs', (req, res) => {
                 success: false,
                 message: 'Error connecting to database.',
                 data: []
-            })
+            });
         }
         let db = client.db(dbName);
         let collection = db.collection(collectionName);
