@@ -1,17 +1,17 @@
-const express = require('express');
-const jsonParser = require('body-parser').json();
-const mongoClient = require('mongodb').MongoClient;
-const ObjectId = require('mongodb').ObjectId;
+const express = require('express')
+const jsonParser = require('body-parser').json()
+const mongoClient = require('mongodb').MongoClient
+const ObjectId = require('mongodb').ObjectId
 const cors = require('cors')
 
-const app = express();
-const port = 3000;
-app.listen(port, () => console.log(`Hot Dog API listening on ${port}`));
-app.use(cors());
+const app = express()
+const port = 3000
+app.listen(port, () => console.log(`Hot Dog API listening on ${port}`))
+app.use(cors())
 
-const mongoUrl = 'mongodb://localhost:27017/';
-const dbName = 'hot-dog';
-const collectionName = 'dogs';
+const mongoUrl = 'mongodb://localhost:27017/'
+const dbName = 'hot-dog'
+const collectionName = 'dogs'
 
 app.get('/dogs', (req, res) => {
   mongoClient.connect(mongoUrl, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
@@ -22,8 +22,8 @@ app.get('/dogs', (req, res) => {
         data: []
       })
     }
-    let db = client.db(dbName);
-    let collection = db.collection(collectionName);
+    let db = client.db(dbName)
+    let collection = db.collection(collectionName)
     collection.find({}).toArray((err, docs) => {
       if (err) {
         return res.status(400).json({
@@ -37,7 +37,7 @@ app.get('/dogs', (req, res) => {
         message: '',
         data: docs
       });
-      client.close();
+      client.close()
     });
   });
 });
