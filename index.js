@@ -17,7 +17,7 @@ const collectionName = 'dogs'
 app.get('/dogs', (req, res) => {
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 success: false,
                 message: 'Error connecting to database.',
                 data: []
@@ -27,15 +27,15 @@ app.get('/dogs', (req, res) => {
         let collection = db.collection(collectionName)
         collection.find({}).toArray((err, docs) => {
             if (err) {
-                return res.status(400).json({
-                    success: true,
+                return res.status(500).json({
+                    success: false,
                     message: 'Error getting data from database.',
                     data: []
                 })
             }
             res.status(200).json({
                 success: true,
-                message: '',
+                message: 'Data has been succesfully retrieved and sent.',
                 data: docs
             })
             client.close()
