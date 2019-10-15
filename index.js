@@ -22,7 +22,7 @@ app.get('/dogs', (req, res) => {
         data: []
       })
     }
-    let db = client.db(dbName)
+    let db = client.db(dbName);
     let collection = db.collection(collectionName)
     collection.find({}).toArray((err, docs) => {
       if (err) {
