@@ -43,7 +43,7 @@ app.get('/dogs', (req, res) => {
 })
 
 app.put('/dogs', jsonParser, (req, res) => {
-    if (req.body.winnerID == null || req.body.winCount == null) {
+    if (req.body.winnerID == '' || req.body.winCount == '') {
         return res.status(400).json({
             success: false,
             message: 'Please ensure request has valid "winnerID" and "winCount" and try again.',
@@ -54,29 +54,39 @@ app.put('/dogs', jsonParser, (req, res) => {
         if (err) {
             return res.status(500).json({
                 success: false,
-                message: 'Error conencting to database.',
+                message: 'Error connecting to database.',
                 data: []
             })
         }
         let db = client.db(dbName)
-        declareChampion(db, req.body, function (result) {
-            res.status(200).json({
-                success: true,
-                message: 'Your selection has been.....noted.',
-                data: result
+        try {
+            declareChampion(db, req.body, function (result) {
+                res.status(200).json({
+                    success: true,
+                    message: 'Your choice has been received and the database has been updated.',
+                    data: result
+                })
             })
-        })
+        }
+        catch (err) {
+            return res.status(400).json({
+                success: false,
+                message: 'Not able to update database',
+                data: []
+            })
+        }
     })
 })
 
 const declareChampion = function (db, details, callback) {
     var collection = db.collection(collectionName)
     newCount = details.winCount + 1
-    collection.updateOne(
+        collection.updateOne(
         {"_id": ObjectId(details.winnerID)},
         {$set: {"winCount": newCount}},
         function (err, result) {
-            console.log('I have made your dog......A WINNER!')
+            console.log('Database has been updated')
             callback(result)
-    })
+        })
+
 }
