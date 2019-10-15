@@ -27,7 +27,7 @@ app.get('/dogs', (req, res) => {
         collection.find({}).toArray((err, docs) => {
             if (err) {
                 return res.status(400).json({
-                    success: true,
+                    success: false,
                     message: 'Error getting data from database.',
                     data: []
                 });
