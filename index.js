@@ -43,6 +43,13 @@ app.get('/dogs', (req, res) => {
 })
 
 app.put('/dogs', jsonParser, (req, res) => {
+    if (req.body.winnerID == null || req.body.winCount == null) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please ensure request has valid "winnerID" and "winCount" and try again.',
+            data: []
+        })
+    }
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
             return res.status(500).json({
@@ -52,7 +59,6 @@ app.put('/dogs', jsonParser, (req, res) => {
             })
         }
         let db = client.db(dbName)
-        console.log(req.body.winnerID)
         declareChampion(db, req.body, function (result) {
             res.status(200).json({
                 success: true,
@@ -67,7 +73,7 @@ const declareChampion = function (db, details, callback) {
     var collection = db.collection(collectionName)
     newCount = details.winCount + 1
     collection.updateOne(
-        {"_id": details.winnerID},
+        {"_id": ObjectId(details.winnerID)},
         {$set: {"winCount": newCount}},
         function (err, result) {
             console.log('I have made your dog......A WINNER!')
