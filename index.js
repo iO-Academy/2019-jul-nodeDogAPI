@@ -41,3 +41,36 @@ app.get('/dogs', (req, res) => {
         })
     })
 })
+
+app.put('/dogs', jsonParser, (req, res) => {
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error conencting to database.',
+                data: []
+            })
+        }
+        let db = client.db(dbName)
+        console.log(req.body.winnerID)
+        declareChampion(db, req.body, function (result) {
+            res.status(200).json({
+                success: true,
+                message: 'Your selection has been.....noted.',
+                data: result
+            })
+        })
+    })
+})
+
+const declareChampion = function (db, details, callback) {
+    var collection = db.collection(collectionName)
+    newCount = details.winCount + 1
+    collection.updateOne(
+        {"_id": details.winnerID},
+        {$set: {"winCount": newCount}},
+        function (err, result) {
+            console.log('I have made your dog......A WINNER!')
+            callback(result)
+    })
+}
