@@ -42,8 +42,9 @@ app.get('/dogs', (req, res) => {
     })
 })
 
-app.put('/dogs', jsonParser, (req, res) => {
-    if (req.body.winnerID == '') {
+app.post('/dogs/:id/win', jsonParser, (req, res) => {
+    let id = req.param('id')
+    if (id == '') {
         return res.status(400).json({
             success: false,
             message: 'Please ensure request has valid "winnerID" and "winCount" and try again.',
@@ -60,7 +61,7 @@ app.put('/dogs', jsonParser, (req, res) => {
         }
         let db = client.db(dbName)
         try {
-            declareChampion(db, req.body, function (result) {
+            declareChampion(db, id, function (result) {
                 res.status(200).json({
                     success: true,
                     message: 'Your choice has been received and the database has been updated.',
@@ -78,11 +79,12 @@ app.put('/dogs', jsonParser, (req, res) => {
     })
 })
 
-const declareChampion = function (db, details, callback) {
+const declareChampion = function (db, id, callback) {
     let collection = db.collection(collectionName)
+    let winnerID = ObjectId(id)
     try {
         collection.updateOne(
-            {"_id": ObjectId(details.winnerID)},
+            {"_id": winnerID},
             {$inc: {"winCount": 1}},
             function (err, result) {
                 console.log('Database has been updated')
