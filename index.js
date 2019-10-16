@@ -44,10 +44,11 @@ app.get('/dogs', (req, res) => {
 
 app.post('/dogs/:id/win', jsonParser, (req, res) => {
     let id = req.param('id')
-    if (id == '') {
+    let regex = RegExp('[0-9a-fA-F]{24}')
+    if (regex.exec(id) == null) {
         return res.status(400).json({
             success: false,
-            message: 'Please ensure request has valid "winnerID" and "winCount" and try again.',
+            message: 'Please ensure request has valid "winnerID" and try again.',
             data: []
         })
     }
