@@ -41,3 +41,77 @@ app.get('/dogs', (req, res) => {
         })
     })
 })
+
+app.post('/dogs/:id/win', jsonParser, (req, res) => {
+    let id = req.param('id')
+    let regex = RegExp('[0-9a-fA-F]{24}')
+    if (regex.exec(id) == null) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please ensure request has valid "winnerID" and try again.',
+            data: []
+        })
+    }
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error connecting to database.',
+                data: []
+            })
+        }
+        let db = client.db(dbName)
+        try {
+            declareChampion(db, id, function (result) {
+                if (result.success === true) {
+                    res.status(200).json({
+                        success: true,
+                        message: 'Your choice has been received and the database has been updated.',
+                        data: result.result
+                    })
+                } else {
+                    res.status(400).json({
+                        success: false,
+                        message: 'Not able to update database. No entries update. Check exists in Database.',
+                        data: result.result
+                    })
+                }
+            })
+        }
+        catch (err) {
+            return res.status(400).json({
+                success: false,
+                message: 'Not able to update database',
+                data: []
+            })
+        }
+    })
+})
+
+const declareChampion = function (db, id, callback) {
+    let collection = db.collection(collectionName)
+    let winnerID = ObjectId(id)
+    try {
+        collection.updateOne(
+            {"_id": winnerID},
+            {$inc: {"winCount": 1}},
+            function (err, result) {
+                if (result.modifiedCount === 0){
+                    console.log('No entries modified!')
+                    callback({
+                        success: false,
+                        result: result
+                    })
+                } else {
+                    console.log('Database has been updated')
+                    callback({
+                        success: true,
+                        result: result
+                    })
+                }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
