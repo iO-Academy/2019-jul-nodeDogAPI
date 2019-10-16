@@ -82,6 +82,9 @@ const declareChampion = async function (db, details, callback) {
     let collection = db.collection(collectionName)
     try {
         let winner = await collection.find({"_id": ObjectId(details.winnerID)}).toArray()
+        if (!winner[0].hasOwnProperty('winCount')) {
+            winner[0].winCount = 0
+        }
         console.log(winner)
         console.log(winner[0].winCount)
         let newCount = parseInt(winner[0].winCount) + 1
