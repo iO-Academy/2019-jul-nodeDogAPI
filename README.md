@@ -26,9 +26,7 @@ Responds with json:
 
 ## Update Winner
 
-Make ```PUT``` request to ```/dogs```
+Make ```POST``` request to ```/dogs/:id/win```
 
-Body should include a json with the following header:
-
-    {winnerID: string(MongoObjectID)}
+where :id is the MongoDB _id
 
