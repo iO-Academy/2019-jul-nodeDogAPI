@@ -43,7 +43,7 @@ app.get('/dogs', (req, res) => {
 })
 
 app.put('/dogs', jsonParser, (req, res) => {
-    if (req.body.winnerID == '' || req.body.winCount == '') {
+    if (req.body.winnerID == '') {
         return res.status(400).json({
             success: false,
             message: 'Please ensure request has valid "winnerID" and "winCount" and try again.',
@@ -78,15 +78,24 @@ app.put('/dogs', jsonParser, (req, res) => {
     })
 })
 
-const declareChampion = function (db, details, callback) {
-    var collection = db.collection(collectionName)
-    newCount = details.winCount + 1
+const declareChampion = async function (db, details, callback) {
+    let collection = db.collection(collectionName)
+    try {
+        let winner = await collection.find({"_id": ObjectId(details.winnerID)}).toArray()
+        console.log(winner)
+        console.log(winner[0].winCount)
+        let newCount = parseInt(winner[0].winCount) + 1
+        console.log(newCount)
         collection.updateOne(
-        {"_id": ObjectId(details.winnerID)},
-        {$set: {"winCount": newCount}},
-        function (err, result) {
-            console.log('Database has been updated')
-            callback(result)
+            {"_id": ObjectId(winner[0]._id)},
+            {$set: {"winCount": newCount}},
+            function (err, result) {
+                console.log('Database has been updated')
+                callback(result)
         })
+    }
+    catch (err) {
+        console.log(err)
+    }
 
 }
