@@ -78,17 +78,12 @@ app.put('/dogs', jsonParser, (req, res) => {
     })
 })
 
-const declareChampion = async function (db, details, callback) {
+const declareChampion = function (db, details, callback) {
     let collection = db.collection(collectionName)
     try {
-        let winner = await collection.find({"_id": ObjectId(details.winnerID)}).toArray()
-        if (!winner[0].hasOwnProperty('winCount')) {
-            winner[0].winCount = 0
-        }
-        let newCount = parseInt(winner[0].winCount) + 1
         collection.updateOne(
-            {"_id": ObjectId(winner[0]._id)},
-            {$set: {"winCount": newCount}},
+            {"_id": ObjectId(details.winnerID)},
+            {$inc: {"winCount": 1}},
             function (err, result) {
                 console.log('Database has been updated')
                 callback(result)
