@@ -28,7 +28,7 @@ Responds with json:
 
 Make ```PUT``` request to ```/dogs```
 
-Body should include a json with the following headers:
+Body should include a json with the following header:
 
-    {winnerID: string(MongoObjectID), winCount: integer}
+    {winnerID: string(MongoObjectID)}
 
