@@ -97,5 +97,4 @@ const declareChampion = async function (db, details, callback) {
     catch (err) {
         console.log(err)
     }
-
 }
