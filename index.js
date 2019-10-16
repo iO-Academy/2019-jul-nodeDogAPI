@@ -63,11 +63,19 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
         let db = client.db(dbName)
         try {
             declareChampion(db, id, function (result) {
-                res.status(200).json({
-                    success: true,
-                    message: 'Your choice has been received and the database has been updated.',
-                    data: result
-                })
+                if (result.success === true) {
+                    res.status(200).json({
+                        success: true,
+                        message: 'Your choice has been received and the database has been updated.',
+                        data: result.result
+                    })
+                } else {
+                    res.status(400).json({
+                        success: false,
+                        message: 'Not able to update database. No entries update. Check exists in Database.',
+                        data: result.result
+                    })
+                }
             })
         }
         catch (err) {
@@ -88,8 +96,19 @@ const declareChampion = function (db, id, callback) {
             {"_id": winnerID},
             {$inc: {"winCount": 1}},
             function (err, result) {
-                console.log('Database has been updated')
-                callback(result)
+                if (result.modifiedCount === 0){
+                    console.log('No entries modified!')
+                    callback({
+                        success: false,
+                        result: result
+                    })
+                } else {
+                    console.log('Database has been updated')
+                    callback({
+                        success: true,
+                        result: result
+                    })
+                }
         })
     }
     catch (err) {
