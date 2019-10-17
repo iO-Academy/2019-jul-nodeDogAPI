@@ -26,7 +26,7 @@ Responds with json:
 
 ## Update Winner
 
-Make ```POST``` request to ```/dogs/:id/win```
+Make ```POST``` request to ```/dogs/:id/wins```
 
 where :id is the MongoDB _id
 
