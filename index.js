@@ -71,19 +71,15 @@ const declareChampion = function (collection, id, callback) {
         {"_id": winnerID},
         {$inc: {"winCount": 1}})
         .then( result => {
-            if (result.modifiedCount === 0){
-                callback({
-                    success: false,
-                    result: result
-                })
-            } else {
-                callback({
-                    success: true,
-                    result: result
-                })
-            }
-        })
-        .catch( err => {
+            let success = false
+            if (result.modifiedCount === 1){
+                    success = true
+                }
+            callback({
+                success: success,
+                result: result
+            })
+        }).catch( err => {
             console.log(err)
         })
 }
