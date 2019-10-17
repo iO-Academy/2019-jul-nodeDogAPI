@@ -63,7 +63,7 @@ app.post('/dogs/:id/win', (req, res) => {
         const db = client.db(dbName)
         const collection = db.collection(collectionName)
         try {
-            declareChampion(collection, id, function (result) {
+            declareChampion(collection, id, client, function (result) {
                 if (result.success === true) {
                     res.status(200).json({
                         success: true,
@@ -89,7 +89,7 @@ app.post('/dogs/:id/win', (req, res) => {
     })
 })
 
-const declareChampion = function (collection, id, callback) {
+const declareChampion = function (collection, id, client, callback) {
     const winnerID = ObjectId(id)
     try {
         collection.updateOne(
