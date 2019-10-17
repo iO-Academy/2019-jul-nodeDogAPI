@@ -43,28 +43,28 @@ app.post('/dogs/:id/wins', (req, res) => {
         return composeJSON(res, 400, false, 'Invalid winner ID.', [])
     }
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then( client => {
-        const db = client.db(dbName)
-        const collection = db.collection(collectionName)
-        try {
-            declareChampion(collection, id, function (result) {
-                client.close()
-                if (result.success === true) {
-                    return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
-                } else {
-                    return composeJSON(res, 400, false, 'Not able to update records.', [])
-                }
-            })
-        }
-        catch (err) {
-            return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
-        }
-    })
-    .catch( err => {
-        console.log(err)
-        client.close()
-        return composeJSON(res, 500, false, 'Server error.', [])
-    })
+        .then( client => {
+            const db = client.db(dbName)
+            const collection = db.collection(collectionName)
+            try {
+                declareChampion(collection, id, function (result) {
+                    client.close()
+                    if (result.success === true) {
+                        return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
+                    } else {
+                        return composeJSON(res, 400, false, 'Not able to update records.', [])
+                    }
+                })
+            }
+            catch (err) {
+                return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
+            }
+        })
+        .catch( err => {
+            console.log(err)
+            client.close()
+            return composeJSON(res, 500, false, 'Server error.', [])
+        })
 })
 
 const declareChampion = function (collection, id, callback) {
