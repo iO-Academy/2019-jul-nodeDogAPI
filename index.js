@@ -43,8 +43,8 @@ app.get('/dogs', (req, res) => {
 })
 
 app.post('/dogs/:id/win', jsonParser, (req, res) => {
-    let id = req.param('id')
-    let regex = RegExp('[0-9a-fA-F]{24}')
+    const id = req.param('id')
+    const regex = RegExp('[0-9a-fA-F]{24}')
     if (regex.exec(id) == null) {
         return res.status(400).json({
             success: false,
@@ -60,9 +60,10 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
                 data: []
             })
         }
-        let db = client.db(dbName)
+        const db = client.db(dbName)
+        const collection = db.collection(collectionName)
         try {
-            declareChampion(db, id, function (result) {
+            declareChampion(collection, id, function (result) {
                 if (result.success === true) {
                     res.status(200).json({
                         success: true,
@@ -88,9 +89,8 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
     })
 })
 
-const declareChampion = function (db, id, callback) {
-    let collection = db.collection(collectionName)
-    let winnerID = ObjectId(id)
+const declareChampion = function (collection, id, callback) {
+    const winnerID = ObjectId(id)
     try {
         collection.updateOne(
             {"_id": winnerID},
