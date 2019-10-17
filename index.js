@@ -16,28 +16,19 @@ const collectionName = 'dogs'
 app.get('/dogs', (req, res) => {
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error connecting to database.',
-                data: []
-            })
+            client.close()
+            return composeJSON(res, 500, false, 'Error connecting to database.', [])
         }
         let db = client.db(dbName)
         let collection = db.collection(collectionName)
         collection.find({}).toArray((err, docs) => {
             if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: 'Error getting data from database.',
-                    data: []
-                })
+                client.close()
+                return composeJSON(res, 500, false, 'Error getting data from database.', [])
+            } else {
+                client.close()
+                return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
             }
-            res.status(200).json({
-                success: true,
-                message: 'Data has been successfully retrieved and sent.',
-                data: docs
-            })
-            client.close()
         })
     })
 })
@@ -46,45 +37,30 @@ app.post('/dogs/:id/win', (req, res) => {
     const id = req.param('id')
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
-        return res.status(400).json({
-            success: false,
-            message: 'Invalid winner ID.',
-            data: []
-        })
+        client.close()
+        return composeJSON(res, 400, false, 'Invalid winner ID.', [])
     }
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error connecting to database.',
-                data: []
-            })
+            client.close()
+            return composeJSON(res, 500, false, 'Error connecting to database.', [])
         }
         const db = client.db(dbName)
         const collection = db.collection(collectionName)
         try {
             declareChampion(collection, id, function (result) {
                 if (result.success === true) {
-                    res.status(200).json({
-                        success: true,
-                        message: 'Your choice has been received and the database has been updated.',
-                        data: [result.result.result]
-                    })
+                    client.close()
+                    return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
                 } else {
-                    res.status(400).json({
-                        success: false,
-                        message: 'Not able to update records.',
-                        data: []
-                    })
+                    client.close()
+                    return composeJSON(res, 400, false, 'Not able to update records.', [])
                 }
             })
         }
         catch (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Failure attempting to update records.',
-                data: []
-            })
+            client.close()
+            return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
         }
     })
 })
@@ -116,4 +92,12 @@ const declareChampion = function (collection, id, callback) {
     catch (err) {
         console.log(err)
     }
+}
+
+function composeJSON(res, status, success, message, data) {
+    return res.status(status).json({
+        success: success,
+        message: message,
+        data: data
+    })
 }
