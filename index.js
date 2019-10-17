@@ -44,19 +44,14 @@ app.post('/dogs/:id/wins', (req, res) => {
         .then( client => {
             const db = client.db(dbName)
             const collection = db.collection(collectionName)
-            try {
-                declareChampion(collection, id, function (result) {
-                    client.close()
-                    if (result.success === true) {
-                        return composeResponseJson(res, 200, true, 'Dog victory recorded', [result.result.result])
-                    } else {
-                        return composeResponseJson(res, 400, false, 'Not able to update records.', [])
-                    }
-                })
-            }
-            catch (err) {
-                return composeResponseJson(res, 500, false, 'Failure attempting to update records.', [])
-            }
+            declareChampion(collection, id, function (result) {
+                client.close()
+                if (result.success === true) {
+                    return composeResponseJson(res, 200, true, 'Dog victory recorded', [result.result.result])
+                } else {
+                    return composeResponseJson(res, 400, false, 'Not able to update records.', [])
+                }
+            })
         }).catch( err => {
             console.log(err)
             return composeResponseJson(res, 500, false, 'Server error.', [])
