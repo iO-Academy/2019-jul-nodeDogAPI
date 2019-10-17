@@ -43,7 +43,7 @@ app.get('/dogs', (req, res) => {
 })
 
 app.post('/dogs/:id/wins', (req, res) => {
-    const id = req.param('id')
+    const id = req.query('id')
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
         return res.status(400).json({
