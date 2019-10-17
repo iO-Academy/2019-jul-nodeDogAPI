@@ -68,13 +68,13 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
                     res.status(200).json({
                         success: true,
                         message: 'Your choice has been received and the database has been updated.',
-                        data: result.result
+                        data: [result.result.result]
                     })
                 } else {
                     res.status(400).json({
                         success: false,
                         message: 'Not able to update records.',
-                        data: result.result
+                        data: []
                     })
                 }
             })
