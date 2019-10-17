@@ -71,28 +71,25 @@ app.post('/dogs/:id/wins', (req, res) => {
 
 const declareChampion = function (collection, id, callback) {
     const winnerID = ObjectId(id)
-    try {
-        collection.updateOne(
-            {"_id": winnerID},
-            {$inc: {"winCount": 1}},
-            function (err, result) {
-                if (result.modifiedCount === 0){
-                    callback({
-                        success: false,
-                        result: result
-                    })
-                } else {
-                    callback({
-                        success: true,
-                        result: result
-                    })
-                }
+    collection.updateOne(
+        {"_id": winnerID},
+        {$inc: {"winCount": 1}})
+        .then( result => {
+            if (result.modifiedCount === 0){
+                callback({
+                    success: false,
+                    result: result
+                })
+            } else {
+                callback({
+                    success: true,
+                    result: result
+                })
             }
-        )
-    }
-    catch (err) {
-        console.log(err)
-    }
+        })
+        .catch( err => {
+            console.log(err)
+        })
 }
 
 function composeJSON(res, status, success, message, data) {
