@@ -42,7 +42,7 @@ app.get('/dogs', (req, res) => {
     })
 })
 
-app.post('/dogs/:id/wins', jsonParser, (req, res) => {
+app.post('/dogs/:id/wins', (req, res) => {
     const id = req.param('id')
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
