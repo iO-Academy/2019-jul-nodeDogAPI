@@ -37,7 +37,6 @@ app.post('/dogs/:id/win', (req, res) => {
     const id = req.param('id')
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
-        client.close()
         return composeJSON(res, 400, false, 'Invalid winner ID.', [])
     }
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
