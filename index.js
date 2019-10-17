@@ -85,7 +85,6 @@ const declareChampion = function (collection, id, callback) {
                         result: result
                     })
                 }
-                client.close()
             }
         )
     }
