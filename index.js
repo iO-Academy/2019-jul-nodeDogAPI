@@ -28,8 +28,7 @@ app.get('/dogs', (req, res) => {
                 .finally( () => {
                     client.close()
                 })
-        })
-        .catch( err => {
+        }).catch( err => {
             console.log(err)
             return composeResponseJson(res, 500, false, 'Server error.', [])
         })
