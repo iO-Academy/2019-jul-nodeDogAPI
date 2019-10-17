@@ -15,11 +15,14 @@ const collectionName = 'dogs'
 app.get('/dogs', (req, res) => {
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
         .then( client => {
-            let db = client.db(dbName)
-            let collection = db.collection(collectionName)
+            let db = client.db('hot-dog')
+            let collection = db.collection('dogs')
             collection.find({}).toArray()
                 .then((docs) => {
-                    return composeResponseJson(res, 200, true, 'Data retrieved successfully', docs)
+                    if (docs.length === 0) {
+                        return composeResponseJson(res, 500, false, 'Data not found', docs)
+                    }
+                    return composeResponseJson(res, 200, true, 'Huzzah!', docs)
                 })
                 .catch (err => {
                     console.log(err)
