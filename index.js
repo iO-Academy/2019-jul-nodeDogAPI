@@ -48,7 +48,7 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
     if (regex.exec(id) == null) {
         return res.status(400).json({
             success: false,
-            message: 'Please ensure request has valid "winnerID" and try again.',
+            message: 'Invalid winner ID.',
             data: []
         })
     }
@@ -73,16 +73,16 @@ app.post('/dogs/:id/win', jsonParser, (req, res) => {
                 } else {
                     res.status(400).json({
                         success: false,
-                        message: 'Not able to update database. No entries update. Check exists in Database.',
+                        message: 'Not able to update records.',
                         data: result.result
                     })
                 }
             })
         }
         catch (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 success: false,
-                message: 'Not able to update database',
+                message: 'Failure attempting to update records.',
                 data: []
             })
         }
