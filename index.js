@@ -58,8 +58,7 @@ app.post('/dogs/:id/wins', (req, res) => {
             catch (err) {
                 return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
             }
-        })
-        .catch( err => {
+        }).catch( err => {
             console.log(err)
             return composeJSON(res, 500, false, 'Server error.', [])
         })
@@ -72,7 +71,7 @@ const declareChampion = function (collection, id, callback) {
         {$inc: {"winCount": 1}})
         .then( result => {
             let success = false
-            if (result.modifiedCount === 1){
+            if (result.modifiedCount === 1) {
                     success = true
                 }
             callback({
@@ -80,7 +79,7 @@ const declareChampion = function (collection, id, callback) {
                 result: result
             })
         }).catch( err => {
-            console.log(err)
+            return err
         })
 }
 
