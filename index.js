@@ -77,7 +77,7 @@ const declareChampion = function (collection, id, callback) {
         })
 }
 
-function composeResponseJson(res, status, success, message, data) {
+const composeResponseJson = function (res, status, success, message, data) {
     return res.status(status).json({
         success: success,
         message: message,
