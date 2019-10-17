@@ -15,24 +15,25 @@ const collectionName = 'dogs'
 
 app.get('/dogs', (req, res) => {
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then( client => {
-        let db = client.db(dbName)
-        let collection = db.collection(collectionName)
-        collection.find({}).toArray((err, docs) => {
-            if (err) {
-                client.close()
-                return composeJSON(res, 500, false, 'Error getting data from database.', [])
-            } else {
-                client.close()
-                return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
-            }
+        .then( client => {
+            let db = client.db(dbName)
+            let collection = db.collection(collectionName)
+            collection.find({}).toArray()
+                .then((docs) => {
+                    client.close()
+                    return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
+                })
+                .catch (err => {
+                    console.log(err)
+                    client.close()
+                    return composeJSON(res, 500, false, 'Error getting data from database.', [])
+                })
         })
-    })
-    .catch( err => {
-        console.log(err)
-        client.close()
-        return composeJSON(res, 500, false, 'Server error.', [])
-    })
+        .catch( err => {
+            console.log(err)
+            client.close()
+            return composeJSON(res, 500, false, 'Server error.', [])
+        })
 })
 
 app.post('/dogs/:id/wins', (req, res) => {
