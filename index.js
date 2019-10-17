@@ -44,8 +44,8 @@ app.get('/dogs', (req, res) => {
 
 app.post('/dogs/:id/wins', jsonParser, (req, res) => {
     const id = req.param('id')
-    const regex = RegExp('[0-9a-fA-F]{24}')
-    if (regex.exec(id) == null) {
+    const regex = RegExp('[0-9a-f]{24}')
+    if (regex.exec(id) === null) {
         return res.status(400).json({
             success: false,
             message: 'Invalid winner ID.',
@@ -68,13 +68,13 @@ app.post('/dogs/:id/wins', jsonParser, (req, res) => {
                     res.status(200).json({
                         success: true,
                         message: 'Your choice has been received and the database has been updated.',
-                        data: result.result
+                        data: [result.result.result]
                     })
                 } else {
                     res.status(400).json({
                         success: false,
                         message: 'Not able to update records.',
-                        data: result.result
+                        data: []
                     })
                 }
             })
@@ -109,7 +109,9 @@ const declareChampion = function (collection, id, callback) {
                         result: result
                     })
                 }
-        })
+                client.close()
+            }
+        )
     }
     catch (err) {
         console.log(err)
