@@ -109,10 +109,11 @@ const declareChampion = function (collection, id, callback) {
                         result: result
                     })
                 }
-        })
+                client.close()
+            }
+        )
     }
     catch (err) {
         console.log(err)
-        
     }
 }
