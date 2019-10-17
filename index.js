@@ -19,11 +19,11 @@ app.get('/dogs', (req, res) => {
             let collection = db.collection(collectionName)
             collection.find({}).toArray()
                 .then((docs) => {
-                    return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
+                    return composeResponseJson(res, 200, true, 'Data retrieved successfully', docs)
                 })
                 .catch (err => {
                     console.log(err)
-                    return composeJSON(res, 500, false, 'Error getting data from database.', [])
+                    return composeResponseJson(res, 500, false, 'Error getting data from database.', [])
                 })
                 .finally( () => {
                     client.close()
@@ -31,7 +31,7 @@ app.get('/dogs', (req, res) => {
         })
         .catch( err => {
             console.log(err)
-            return composeJSON(res, 500, false, 'Server error.', [])
+            return composeResponseJson(res, 500, false, 'Server error.', [])
         })
 })
 
@@ -39,7 +39,7 @@ app.post('/dogs/:id/wins', (req, res) => {
     const id = req.params.id
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
-        return composeJSON(res, 400, false, 'Invalid winner ID.', [])
+        return composeResponseJson(res, 400, false, 'Invalid winner ID.', [])
     }
     mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
         .then( client => {
@@ -49,18 +49,18 @@ app.post('/dogs/:id/wins', (req, res) => {
                 declareChampion(collection, id, function (result) {
                     client.close()
                     if (result.success === true) {
-                        return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
+                        return composeResponseJson(res, 200, true, 'Dog victory recorded', [result.result.result])
                     } else {
-                        return composeJSON(res, 400, false, 'Not able to update records.', [])
+                        return composeResponseJson(res, 400, false, 'Not able to update records.', [])
                     }
                 })
             }
             catch (err) {
-                return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
+                return composeResponseJson(res, 500, false, 'Failure attempting to update records.', [])
             }
         }).catch( err => {
             console.log(err)
-            return composeJSON(res, 500, false, 'Server error.', [])
+            return composeResponseJson(res, 500, false, 'Server error.', [])
         })
 })
 
@@ -83,7 +83,7 @@ const declareChampion = function (collection, id, callback) {
         })
 }
 
-function composeJSON(res, status, success, message, data) {
+function composeResponseJson(res, status, success, message, data) {
     return res.status(status).json({
         success: success,
         message: message,
