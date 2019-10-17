@@ -24,7 +24,7 @@ Responds with json:
         data: object (all Dogs info)
     }
 
-## Update Winner
+## Add to a dog's win count
 
 Make ```POST``` request to ```/dogs/:id/wins```
 
