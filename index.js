@@ -20,18 +20,18 @@ app.get('/dogs', (req, res) => {
             let collection = db.collection(collectionName)
             collection.find({}).toArray()
                 .then((docs) => {
-                    client.close()
                     return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
                 })
                 .catch (err => {
                     console.log(err)
-                    client.close()
                     return composeJSON(res, 500, false, 'Error getting data from database.', [])
+                })
+                .finally( () => {
+                    client.close()
                 })
         })
         .catch( err => {
             console.log(err)
-            client.close()
             return composeJSON(res, 500, false, 'Server error.', [])
         })
 })
@@ -48,17 +48,15 @@ app.post('/dogs/:id/wins', (req, res) => {
         const collection = db.collection(collectionName)
         try {
             declareChampion(collection, id, function (result) {
+                client.close()
                 if (result.success === true) {
-                    client.close()
                     return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
                 } else {
-                    client.close()
                     return composeJSON(res, 400, false, 'Not able to update records.', [])
                 }
             })
         }
         catch (err) {
-            client.close()
             return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
         }
     })
