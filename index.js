@@ -34,7 +34,7 @@ app.get('/dogs', (req, res) => {
 })
 
 app.post('/dogs/:id/wins', (req, res) => {
-    const id = req.param('id')
+    const id = req.params('id')
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
         return composeJSON(res, 400, false, 'Invalid winner ID.', [])
@@ -72,13 +72,11 @@ const declareChampion = function (collection, id, callback) {
             {$inc: {"winCount": 1}},
             function (err, result) {
                 if (result.modifiedCount === 0){
-                    console.log('No entries modified!')
                     callback({
                         success: false,
                         result: result
                     })
                 } else {
-                    console.log('Database has been updated')
                     callback({
                         success: true,
                         result: result
