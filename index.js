@@ -1,5 +1,4 @@
 const express = require('express')
-const jsonParser = require('body-parser').json()
 const mongoClient = require('mongodb').MongoClient
 const ObjectId = require('mongodb').ObjectId
 const cors = require('cors')
