@@ -14,11 +14,8 @@ const dbName = 'hot-dog'
 const collectionName = 'dogs'
 
 app.get('/dogs', (req, res) => {
-    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-            client.close()
-            return composeJSON(res, 500, false, 'Error connecting to database.', [])
-        }
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then( client => {
         let db = client.db(dbName)
         let collection = db.collection(collectionName)
         collection.find({}).toArray((err, docs) => {
@@ -31,19 +28,21 @@ app.get('/dogs', (req, res) => {
             }
         })
     })
+    .catch( err => {
+        console.log(err)
+        client.close()
+        return composeJSON(res, 500, false, 'Server error.', [])
+    })
 })
 
 app.post('/dogs/:id/wins', (req, res) => {
-    const id = req.params('id')
+    const id = req.params.id
     const regex = RegExp('[0-9a-f]{24}')
     if (regex.exec(id) === null) {
         return composeJSON(res, 400, false, 'Invalid winner ID.', [])
     }
-    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-            client.close()
-            return composeJSON(res, 500, false, 'Error connecting to database.', [])
-        }
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then( client => {
         const db = client.db(dbName)
         const collection = db.collection(collectionName)
         try {
@@ -61,6 +60,11 @@ app.post('/dogs/:id/wins', (req, res) => {
             client.close()
             return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
         }
+    })
+    .catch( err => {
+        console.log(err)
+        client.close()
+        return composeJSON(res, 500, false, 'Server error.', [])
     })
 })
 
