@@ -14,23 +14,26 @@ const dbName = 'hot-dog'
 const collectionName = 'dogs'
 
 app.get('/dogs', (req, res) => {
-    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-            client.close()
-            return composeJSON(res, 500, false, 'Error connecting to database.', [])
-        }
-        let db = client.db(dbName)
-        let collection = db.collection(collectionName)
-        collection.find({}).toArray((err, docs) => {
-            if (err) {
-                client.close()
-                return composeJSON(res, 500, false, 'Error getting data from database.', [])
-            } else {
-                client.close()
-                return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
-            }
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then( client => {
+            let db = client.db(dbName)
+            let collection = db.collection(collectionName)
+            collection.find({}).toArray()
+                .then((docs) => {
+                    return composeJSON(res, 200, true, 'Data retrieved successfully', docs)
+                })
+                .catch (err => {
+                    console.log(err)
+                    return composeJSON(res, 500, false, 'Error getting data from database.', [])
+                })
+                .finally( () => {
+                    client.close()
+                })
         })
-    })
+        .catch( err => {
+            console.log(err)
+            return composeJSON(res, 500, false, 'Server error.', [])
+        })
 })
 
 app.post('/dogs/:id/wins', (req, res) => {
@@ -39,55 +42,51 @@ app.post('/dogs/:id/wins', (req, res) => {
     if (regex.exec(id) === null) {
         return composeJSON(res, 400, false, 'Invalid winner ID.', [])
     }
-    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-            client.close()
-            return composeJSON(res, 500, false, 'Error connecting to database.', [])
-        }
-        const db = client.db(dbName)
-        const collection = db.collection(collectionName)
-        try {
-            declareChampion(collection, id, function (result) {
-                if (result.success === true) {
+    mongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then( client => {
+            const db = client.db(dbName)
+            const collection = db.collection(collectionName)
+            try {
+                declareChampion(collection, id, function (result) {
                     client.close()
-                    return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
-                } else {
-                    client.close()
-                    return composeJSON(res, 400, false, 'Not able to update records.', [])
-                }
-            })
-        }
-        catch (err) {
-            client.close()
-            return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
-        }
-    })
+                    if (result.success === true) {
+                        return composeJSON(res, 200, true, 'Dog victory recorded', [result.result.result])
+                    } else {
+                        return composeJSON(res, 400, false, 'Not able to update records.', [])
+                    }
+                })
+            }
+            catch (err) {
+                return composeJSON(res, 500, false, 'Failure attempting to update records.', [])
+            }
+        })
+        .catch( err => {
+            console.log(err)
+            return composeJSON(res, 500, false, 'Server error.', [])
+        })
 })
 
 const declareChampion = function (collection, id, callback) {
     const winnerID = ObjectId(id)
-    try {
-        collection.updateOne(
-            {"_id": winnerID},
-            {$inc: {"winCount": 1}},
-            function (err, result) {
-                if (result.modifiedCount === 0){
-                    callback({
-                        success: false,
-                        result: result
-                    })
-                } else {
-                    callback({
-                        success: true,
-                        result: result
-                    })
-                }
+    collection.updateOne(
+        {"_id": winnerID},
+        {$inc: {"winCount": 1}})
+        .then( result => {
+            if (result.modifiedCount === 0){
+                callback({
+                    success: false,
+                    result: result
+                })
+            } else {
+                callback({
+                    success: true,
+                    result: result
+                })
             }
-        )
-    }
-    catch (err) {
-        console.log(err)
-    }
+        })
+        .catch( err => {
+            console.log(err)
+        })
 }
 
 function composeJSON(res, status, success, message, data) {
