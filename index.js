@@ -62,7 +62,6 @@ app.post('/dogs/:id/wins', (req, res) => {
         })
         .catch( err => {
             console.log(err)
-            client.close()
             return composeJSON(res, 500, false, 'Server error.', [])
         })
 })
