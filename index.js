@@ -49,7 +49,7 @@ app.post('/dogs/:id/wins', (req, res) => {
                 if (result.success === true) {
                     return composeResponseJson(res, 200, true, 'Dog victory recorded', [result.result.result])
                 } else {
-                    return composeResponseJson(res, 400, false, 'Not able to update records.', [])
+                    return composeResponseJson(res, 400, false, 'Not able to update record.', [])
                 }
             })
         }).catch( err => {
